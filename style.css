@@ -1,0 +1,273 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap');
+
+:root {
+    --squid-pink: #ff0080;
+    --squid-blue: #00c3ff;
+    --background: #121212;
+    --text: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto Mono', monospace;
+    background-color: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+}
+
+/* Setup Screen */
+.setup {
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px var(--squid-pink),
+                 0 0 20px var(--squid-blue);
+}
+
+.setup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}
+
+.neon-select {
+    background: transparent;
+    border: 2px solid var(--squid-pink);
+    color: var(--text);
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    font-family: 'Roboto Mono', monospace;
+    cursor: pointer;
+    text-align: center;
+}
+
+.neon-select option {
+    background: var(--background);
+}
+
+.start-btn {
+    background: transparent;
+    border: 2px solid var(--squid-blue);
+    color: var(--text);
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.start-btn:hover {
+    background: var(--squid-blue);
+    box-shadow: 0 0 20px var(--squid-blue);
+}
+
+/* Game Screen */
+.game {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    text-align: center;
+}
+
+.game-instructions {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    text-shadow: 0 0 10px var(--squid-pink);
+    animation: pulse 2s infinite;
+}
+
+.timers {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.timer {
+    padding: 2rem;
+    border-radius: 10px;
+    width: 45%;
+    max-width: 300px;
+}
+
+.timer.red {
+    border: 2px solid var(--squid-pink);
+    box-shadow: 0 0 10px var(--squid-pink);
+}
+
+.timer.blue {
+    border: 2px solid var(--squid-blue);
+    box-shadow: 0 0 10px var(--squid-blue);
+}
+
+.timer-label {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.timer-display {
+    font-size:  2.4rem;
+    font-weight: bold;
+}
+
+.active-team-display {
+    font-size: 1.8rem;
+    margin: 1rem 0;
+    text-align: center;
+    min-height: 2.5rem;
+    animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+.active-team-display.red {
+    color: var(--squid-pink);
+    text-shadow: 0 0 10px var(--squid-pink);
+}
+
+.active-team-display.blue {
+    color: var(--squid-blue);
+    text-shadow: 0 0 10px var(--squid-blue);
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--squid-pink);
+    }
+    to {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--squid-blue);
+    }
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.hit-btn {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 2rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 150px;
+}
+
+.red-btn {
+    background: var(--squid-pink);
+    color: var(--text);
+    height: 200px;
+}
+
+.blue-btn {
+    background: var(--squid-blue);
+    color: var(--text);
+}
+
+.hit-btn:hover {
+    transform: scale(1.05);
+}
+
+.winner {
+    font-size: 2rem;
+    padding: 1rem;
+    margin-top: 2rem;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.winner.show {
+    opacity: 1;
+}
+
+.winner.red {
+    color: var(--squid-pink);
+    text-shadow: 0 0 10px var(--squid-pink);
+}
+
+.winner.blue {
+    color: var(--squid-blue);
+    text-shadow: 0 0 10px var(--squid-blue);
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Responsive design per iPhone 12 Pro */
+@media screen and (max-width: 390px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .game-instructions {
+        font-size: 1.2rem;
+    }
+
+    .timers {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .timer {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .timer-display {
+        font-size: 2.5rem;
+    }
+
+    .controls {
+        gap: 1rem;
+    }
+
+    .hit-btn {
+        font-size: 1.5rem;
+        padding: 0.8rem 1.5rem;
+        width: 120px;
+    }
+
+    .winner {
+        font-size: 1.5rem;
+    }
+}
+
+

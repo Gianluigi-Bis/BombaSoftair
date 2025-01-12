@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squid Softair</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="setup" id="setup">
+            <h1>スクイッドソフトエア</h1>
+            <div class="setup-content">
+                <select id="duration" class="neon-select">
+                    <option value="1">01:00</option>
+                    <option value="5">05:00</option>
+                    <option value="10">10:00</option>
+                    <option value="15">15:00</option>
+                    <option value="20">20:00</option>
+                    <option value="30">30:00</option>
+                    <option value="60">60:00</option>
+                </select>
+                <button onclick="startGame()" class="start-btn">INIZIA</button>
+            </div>
+        </div>
+
+        <div class="game" id="gameContainer">
+            <div id="gameInstructions" class="game-instructions">
+                Conquista il territorio!
+            </div>
+            
+            <div class="timers">
+                <div class="timer red">
+                    <div class="timer-label">Squadra Rossa</div>
+                    <div class="timer-display" id="redTimer">00:00</div>
+                </div>
+                <div class="timer blue">
+                    <div class="timer-label">Squadra Blu</div>
+                    <div class="timer-display" id="blueTimer">00:00</div>
+                </div>
+            </div>
+
+            <div id="activeTeamDisplay" class="active-team-display"></div>
+            
+            <div class="controls">
+                <button class="hit-btn red-btn" onclick="hit('red')">Rosso</button>
+                <button class="hit-btn blue-btn" onclick="hit('blue')">Blu</button>
+            </div>
+            
+            <div id="winner" class="winner"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
