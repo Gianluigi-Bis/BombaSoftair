@@ -8,25 +8,22 @@ let targetTime = 0; // Tempo obiettivo da raggiungere
 let soundsLoaded = false;
 
 // Inizializzazione suoni
-const bombSound1 = new Audio('./bombsound1.wav');
-const bombSound2 = new Audio('./bombsound2.wav');
 const alarmSound = new Audio('./alarm.wav');
-
-// Configura i suoni delle bombe
-bombSound1.loop = false; // Disabilitiamo il loop automatico per gestirlo manualmente
-bombSound2.loop = false;
+const clickSound = new Audio('./notification.wav');
 
 // Pre-carica i suoni
 window.addEventListener('load', () => {
-    bombSound1.load();
-    bombSound2.load();
     alarmSound.load();
+    clickSound.load();
+    // Imposta il volume del click più basso
+    clickSound.volume = 0.3;
     document.addEventListener('click', () => {
-        bombSound1.load();
-        bombSound2.load();
         alarmSound.load();
+        clickSound.load();
     }, { once: true });
 });
+
+
 
 // Aggiungi event listener per il primo click sulla pagina
 document.addEventListener('click', () => {
@@ -43,35 +40,14 @@ function formatTime(seconds) {
     return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 }
 
+
 function loadSounds() {
     if (!soundsLoaded) {
-        bombSound1.load();
-        bombSound2.load();
         alarmSound.load();
+        clickSound.load();
+        clickSound.volume = 0.3;
         soundsLoaded = true;
     }
-}
-
-// Funzione per fermare tutti i suoni delle bombe
-function stopBombSounds() {
-    bombSound1.pause();
-    bombSound1.currentTime = 0;
-    bombSound2.pause();
-    bombSound2.currentTime = 0;
-}
-
-// Funzione per gestire il loop del suono con pausa
-function playBombSoundWithDelay(sound) {
-    sound.play().catch(e => console.log('Errore riproduzione suono:', e));
-    sound.addEventListener('ended', () => {
-        setTimeout(() => {
-            if (isGameRunning && 
-                ((sound === bombSound1 && activeTeam === 'red') || 
-                 (sound === bombSound2 && activeTeam === 'blue'))) {
-                sound.play().catch(e => console.log('Errore riproduzione suono:', e));
-            }
-        }, 2000); // 2 secondi di pausa
-    });
 }
 
 // Inizia la partita
@@ -86,9 +62,6 @@ function startGame() {
     document.getElementById('gameContainer').style.display = 'flex';
     
     document.getElementById('gameInstructions').style.display = 'block';
-    document.getElementById('winner').className = 'winner';
-    document.getElementById('winner').textContent = '';
-    
     updateTimers();
     isGameRunning = true;
 }
@@ -121,14 +94,6 @@ function startTeamTimer(team) {
     // Imposta la nuova squadra attiva
     activeTeam = team;
     updateActiveTeamDisplay();
-    
-    // Gestisci i suoni delle bombe
-    stopBombSounds();
-    if (team === 'red') {
-        playBombSoundWithDelay(bombSound1);
-    } else {
-        playBombSoundWithDelay(bombSound2);
-    }
     
     // Avvia il nuovo timer
     gameInterval = setInterval(() => {
@@ -170,9 +135,25 @@ function hit(team) {
     // Se viene premuto il bottone, attiva il timer per quella squadra
     startTeamTimer(team);
     
-    // Effetto visivo sul bottone
+    // Effetto visivo sul bottone e suono
     const btn = document.querySelector(`.${team}-btn`);
     btn.style.transform = 'scale(0.95)';
+    
+    // Riproduci il suono di click
+    try {
+        clickSound.currentTime = 0;
+        const playPromise = clickSound.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(e => {
+                console.log('Errore nella riproduzione del suono di click:', e);
+                // Riprova a caricare e riprodurre
+                clickSound.load();
+                clickSound.play().catch(() => {});
+            });
+        }
+    } catch (e) {
+        console.log('Errore nella riproduzione del suono di click:', e);
+    }
     
     setTimeout(() => {
         btn.style.transform = 'scale(1)';
@@ -186,24 +167,18 @@ function endGame() {
     activeTeam = null;
     updateActiveTeamDisplay();
     
-    // Ferma i suoni delle bombe
-    stopBombSounds();
-    
     const winner = document.getElementById('winner');
-    winner.innerHTML = ''; // Pulisce il contenuto precedente
     
     // Determina e mostra il vincitore
-    const winnerText = document.createElement('div');
     if (redTime >= targetTime) {
-        winnerText.textContent = 'SQUADRA ROSSA HA VINTO!';
+        winner.textContent = 'SQUADRA ROSSA HA VINTO!';
         winner.className = 'winner red show';
     } else if (blueTime >= targetTime) {
-        winnerText.textContent = 'SQUADRA BLU HA VINTO!';
+        winner.textContent = 'SQUADRA BLU HA VINTO!';
         winner.className = 'winner blue show';
     }
-    winner.appendChild(winnerText);
     
-    // Riproduce il suono di fine partita
+    // Riproduce il suono
     try {
         alarmSound.play().catch(e => {
             console.log('Errore nella riproduzione del suono:', e);
@@ -213,39 +188,6 @@ function endGame() {
     } catch (e) {
         console.log('Errore nella riproduzione del suono:', e);
     }
-    
-    // Mostra il bottone di reset
-    const resetButton = document.createElement('button');
-    resetButton.textContent = 'Torna al Menu Iniziale';
-    resetButton.className = 'reset-button';
-    resetButton.onclick = resetGame;
-    winner.appendChild(resetButton);
-}
-
-// Funzione per resettare il gioco
-function resetGame() {
-    // Ferma tutti i suoni
-    stopBombSounds();
-    alarmSound.pause();
-    alarmSound.currentTime = 0;
-    
-    // Resetta i timer e lo stato del gioco
-    redTime = 0;
-    blueTime = 0;
-    isGameRunning = false;
-    activeTeam = null;
-    
-    // Nascondi il container del gioco e il messaggio del vincitore
-    document.getElementById('gameContainer').style.display = 'none';
-    document.getElementById('winner').className = 'winner';
-    document.getElementById('winner').innerHTML = '';
-    
-    // Mostra il setup iniziale
-    document.getElementById('setup').style.display = 'flex';
-    
-    // Resetta i display
-    updateTimers();
-    updateActiveTeamDisplay();
 }
 
 // Gestione pressione tasti
