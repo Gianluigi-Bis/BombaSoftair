@@ -6,6 +6,9 @@ let isGameRunning = false;
 let activeTeam = null;
 let targetTime = 0; // Tempo obiettivo da raggiungere
 let soundsLoaded = false;
+// Aggiungi queste variabili all'inizio del tuo JavaScript
+let isPaused = false;
+let lastActiveTeam = null;
 
 // Inizializzazione suoni
 const bombSound1 = new Audio('./bombsound1.wav');
@@ -60,6 +63,32 @@ function stopBombSounds() {
     bombSound2.currentTime = 0;
 }
 
+// Aggiungi questa funzione per gestire pausa/ripresa
+function togglePause() {
+    isPaused = !isPaused;
+    const pauseBtn = document.getElementById('pauseBtn');
+    
+    if (isPaused) {
+        // Salva la squadra attiva corrente e ferma il timer
+        lastActiveTeam = activeTeam;
+        clearInterval(gameInterval);
+        activeTeam = null;
+        updateActiveTeamDisplay();
+        pauseBtn.textContent = '▶ RIPRENDI';
+        pauseBtn.classList.add('paused');
+        // Ferma i suoni della bomba
+        stopBombSounds();
+    } else {
+        // Riprendi il timer con l'ultima squadra attiva
+        if (lastActiveTeam) {
+            startTeamTimer(lastActiveTeam);
+        }
+        pauseBtn.textContent = '⏸ PAUSA';
+        pauseBtn.classList.remove('paused');
+    }
+}
+
+
 // Funzione per gestire il loop del suono con pausa
 function playBombSoundWithDelay(sound) {
     sound.play().catch(e => console.log('Errore riproduzione suono:', e));
@@ -91,6 +120,17 @@ function startGame() {
     
     updateTimers();
     isGameRunning = true;
+
+    if (!document.getElementById('pauseBtn')) {
+        const controlsDiv = document.querySelector('.controls');
+        const pauseBtn = document.createElement('button');
+        pauseBtn.id = 'pauseBtn';
+        pauseBtn.className = 'pause-btn';
+        pauseBtn.textContent = '⏸ PAUSA';
+        pauseBtn.onclick = togglePause;
+        // Inserisci prima del div controls
+        controlsDiv.parentNode.insertBefore(pauseBtn, controlsDiv);
+    }
 }
 
 // Aggiorna il display della squadra attiva
@@ -157,7 +197,7 @@ function updateTimers() {
 
 // Gestisce i colpi delle squadre
 function hit(team) {
-    if (!isGameRunning) return;
+    if (!isGameRunning || isPaused) return;
 
     loadSounds();
 
@@ -246,6 +286,14 @@ function resetGame() {
     // Resetta i display
     updateTimers();
     updateActiveTeamDisplay();
+
+    isPaused = false;
+    lastActiveTeam = null;
+    const pauseBtn = document.getElementById('pauseBtn');
+    if (pauseBtn) {
+        pauseBtn.textContent = '⏸ PAUSA';
+        pauseBtn.classList.remove('paused');
+    }
 }
 
 // Gestione pressione tasti

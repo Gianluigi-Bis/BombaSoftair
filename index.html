@@ -50,6 +50,13 @@
                 <button class="hit-btn red-btn" onclick="hit('red')">Rosso</button>
                 <button class="hit-btn blue-btn" onclick="hit('blue')">Blu</button>
             </div>
+
+            <!-- Aggiungi questo dopo il div controls nell'HTML -->
+            <div class="control-buttons-container">
+                <button id="pauseBtn" class="control-btn pause-btn" onclick="togglePause()">⏸ PAUSA</button>
+                <button class="control-btn reset-btn" onclick="resetGame()">↺ RICOMINCIA</button>
+            </div>
+                        
             
             <div id="winner" class="winner"></div>
         </div>
